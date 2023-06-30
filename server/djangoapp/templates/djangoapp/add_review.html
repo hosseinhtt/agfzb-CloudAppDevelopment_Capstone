@@ -10,12 +10,71 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.js"></script>
+    <style>
+        /* Set the wrapper to be a flex container */
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            /* Ensure wrapper takes up the full viewport height */
+        }
 
+        /* Set the main content area to grow and push the footer to the bottom */
+        .content {
+            flex-grow: 1;
+        }
+
+        /* Style the sticky footer */
+        .footer {
+            background-color: #f5f5f5;
+            padding: 20px;
+            text-align: center;
+        }
+    </style>
 </head>
 
 <body>
+    <!--Add a nav bar here -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">DealerShip</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a class="nav-link active" href="/djangoapp">Home <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="/djangoapp/about">About Us</a>
+                <a class="nav-link" href="/djangoapp/contact">Contact Us</a>
+            </div>
+        </div>
+            
+            <ul class="nav navbar-nav navbar-right">
+                {% if user.is_authenticated %}
+                <li>
+                    <a class="btn btn-link" href="#">{{ user.first_name }}({{ user.username }})</a>
+                    <a class="btn btn-link" href="{% url 'djangoapp:logout' %}">Logout</a>
+                </li>
+                {% else %}
+                <li>
+                    <form class="form-inline" action="{% url 'djangoapp:login' %}" method="post">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Username" name="username">
+                            <input type="password" class="form-control" placeholder="Password" name="psw">
+                            <button class="btn btn-primary" type="submit">Login</button>
+                            <a class="btn btn-link" href="{% url 'djangoapp:registration' %}">Sign Up</a>
+                        </div>
+                    </form>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
     <!--Add review form here -->
+    <br>
     <div class="container">
+        <h1>Add review about {{dealer.full_name}} </h1>
         <form action="/djangoapp/dealer/{{dealer.id}}/add_review" method="post">
             {% csrf_token %}
             <div class="form-group">
@@ -24,14 +83,14 @@
             </div>
             <div class="form-group form-check">
                 <input class="form-check-input" type="checkbox" name="purchasecheck" id="purchasecheck">
-                <label for="purchasecheck">Has purchased the car from {{dealer.full_name}}? (select purchased car
+                <label for="purchasecheck">Has purchased the car from <em> <strong> {{dealer.full_name}}</strong></em>? (select purchased car
                     information below if checked)</label>
             </div>
             <div class="form-group">
                 <label for="car">Select your car (model-make-year):</label>
                 <select name="car" id="car" class="form-select" required>
                     {% for car in cars %}
-                    <option selected value={{car.id}}>{{car.name}}-{{car.car_make.name}}-{{ car.year|date:"Y" }}
+                    <option selected value={{car.id}}>{{car.Name}}-{{car.Car_make.Name}}-{{ car.Year|date:"Y" }}
                     </option>
                     {% endfor %}
                 </select>
@@ -43,6 +102,8 @@
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>
+
+    
 </body>
 <script type="text/javascript">
     $('.date-own').datepicker({

@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
-from .models import CarModel
+from .models import CarModel, CarDealer
 # from .restapis import related methods
 from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf, post_request
 from django.contrib.auth import login, logout, authenticate
@@ -108,6 +108,34 @@ def get_dealerships(request):
 # Create a `get_dealer_details` view to render the reviews of a dealer
 # def get_dealer_details(request, dealer_id):
 # ...
+# def get_dealer_details(request, dealer_id):
+#     if request.method == "GET":
+#         url_ds = f"https://service.eu.apiconnect.ibmcloud.com/gws/apigateway/api/a9220b6d6b26f1eb3b657a98770b743616f7d4cd223b89cd1ca4e88ab49bdb92/api/dealership?dealerId={dealer_id}"
+
+#         response = get_dealers_from_cf(url_ds)
+#         dealerships = response["entries"]
+#         dealer = None
+
+#         # Find the dealership with the matching dealer_id
+#         for entry in dealerships:
+#             if entry["id"] == dealer_id:
+#                 dealer = entry
+#                 break
+
+#         # Get reviews from the URL
+#         url_r = f"https://service.eu.apiconnect.ibmcloud.com/gws/apigateway/api/a9220b6d6b26f1eb3b657a98770b743616f7d4cd223b89cd1ca4e88ab49bdb92/api/review?dealerId={dealer_id}"
+#         reviews = get_dealer_reviews_from_cf(url_r, dealer_id)
+
+#         # Create the context dictionary
+#         context = {
+#             "dealer": dealer,
+#             "reviews": reviews,
+#         }
+
+#         return render(request, 'djangoapp/dealer_details.html', context)
+
+
+
 def get_dealer_details(request, dealer_id):
     if request.method == "GET":
         url_r = f"https://service.eu.apiconnect.ibmcloud.com/gws/apigateway/api/a9220b6d6b26f1eb3b657a98770b743616f7d4cd223b89cd1ca4e88ab49bdb92/api/review?dealerId={dealer_id}"
@@ -143,9 +171,9 @@ def add_review(request, dealer_id):
         if form.get("purchasecheck"):
             review["purchasedate"] = datetime.strptime(form.get("purchasedate"), "%m/%d/%Y").isoformat()
             car = CarModel.objects.get(pk=form["car"])
-            review["car_make"] = car.car_make.name
-            review["car_model"] = car.name
-            review["car_year"]= car.year.strftime("%Y")
+            review["car_make"] = car.Car_make.Name
+            review["car_model"] = car.Name
+            review["car_year"]= car.Year.strftime("%Y")
         json_payload = {"review": review}
         URL = 'https://service.eu.apiconnect.ibmcloud.com/gws/apigateway/api/a9220b6d6b26f1eb3b657a98770b743616f7d4cd223b89cd1ca4e88ab49bdb92/api/review'
         post_request(URL, json_payload, dealerId=dealer_id)

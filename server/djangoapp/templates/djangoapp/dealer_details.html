@@ -53,6 +53,11 @@
             
             <ul class="nav navbar-nav navbar-right">
                 {% if user.is_authenticated %}
+
+                <li class="nav-item">
+                    <a class="nav-link" href="add_review">Add review</a>
+                </li>
+
                 <li>
                     <a class="btn btn-link" href="#">{{ user.first_name }}({{ user.username }})</a>
                     <a class="btn btn-link" href="{% url 'djangoapp:logout' %}">Logout</a>
@@ -74,6 +79,8 @@
         </div>
     </nav>
     <!-- Add reviews as cards -->
+    <div class="container">
+        <h1>Reviews for {{ dealer.full_name }}</h1>
     <div class="card-columns">
         {% for review in reviews %}
         <div class="card text-dark bg-light mb-3 text-left">
@@ -89,6 +96,7 @@
         <h1>This dealership has no reviews to show</h1>
         {% endif %}
     </div>
+    <div>
     </body>
 
 </html>
